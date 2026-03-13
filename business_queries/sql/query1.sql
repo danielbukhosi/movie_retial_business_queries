@@ -1,18 +1,16 @@
 /*
-  -- Output the 10 actors whose movies rented the most, sorted in descending order. --
+  -- Output the number of movies in each category, sorted descending. --
 */
 
-select a.actor_id as actor_id,
-       concat(a.first_name,' ',a.last_name) as actor_full_name,
-	   count(r.rental_id) as rental_count
-from actor a
-join film_actor fa 
-on a.actor_id = fa.actor_id
-join inventory i 
-on fa.film_id = i.film_id
-join rental r
-on i.inventory_id = r.inventory_id
-group by a.actor_id, actor_full_name
-order by actor_full_name desc
-limit 10;
-
+-- JOIN PLAN
+-- category --> film_category --> film(INNER JOIN)
+SELECT  c.category_id,
+        c.name,
+		count(f.film_id) AS movies_in_category
+FROM category c
+JOIN film_category fc
+ON c.category_id = fc.category_id
+JOIN film f
+ON fc.film_id = f.film_id
+GROUP BY c.category_id,c.name
+ORDER BY movies_in_category DESC;
