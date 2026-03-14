@@ -3,10 +3,10 @@
  -- Do the same for cities that have a “-” in them. Write everything in one query.
 */
 
-select sum(f.rental_duration) as total_rental_hours,
-       ca.name as category_name,
+select 
+       distinct ca.name as category_name,
 	   ci.city,
-	   dense_rank() over( order by sum(f.rental_duration) desc ) as popularity_rank_by_city
+	   sum(f.rental_duration) over(partition by city) as total_rental_duration
 from category ca
 left join film_category fc
 on ca.category_id = fc.category_id
@@ -22,8 +22,6 @@ left join address a
 on c.address_id = a.address_id
 inner join city ci
 on a.city_id = ci.city_id
-where ca.name like '%A%'
-group by name, city
-having city like '%-%'
-
+where city like '%-%' and ca.name ilike 'A%'  -- using wildcards
+order by total_rental_duration desc
 
