@@ -1,19 +1,19 @@
 /*
- -- Output cities with the number of active and inactive customers (active - customer.active = 1). 
- -- Sort by the number of inactive customers in descending order.
+ -- Output the top 3 actors who have appeared the most in movies in the “Children” category. 
+ -- If several actors have the same number of movies, output all of them.
 */
-select ci.city,
-       count(c.active) filter(where c.active = 1) as active_customers_count,
-	   count(c.active) filter(where c.active = 0) as inactive_customers_count
-from city ci
-join country co
-on ci.country_id = co.country_id
-join address a
-on ci.city_id = a.city_id
-join customer c
-on a.address_id = c.customer_id
-group by city
-order by inactive_customers_count desc
-
-
-
+select count(a.actor_id) as number_of_appearances,
+       concat(a.first_name,' ',a.last_name) as actor_full_name,
+       c.name as category_name,
+	   dense_rank() over(order by count(a.actor_id) desc ) as popularity_rank
+from actor a
+left join film_actor fa
+on a.actor_id = fa.actor_id
+left join film f
+on fa.film_id = f.film_id
+left join film_category fc
+on f.film_id = fc.film_id
+left join category c
+on fc.category_id = c.category_id
+where c.name = 'Children'
+group by actor_full_name, category_name
