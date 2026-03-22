@@ -13,6 +13,6 @@ on fa.film_id = i.film_id
 join rental r
 on i.inventory_id = r.inventory_id
 group by a.actor_id, actor_full_name
-order by actor_full_name desc
+order by count(r.rental_id) desc
 limit 10;
 
